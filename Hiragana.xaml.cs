@@ -22,7 +22,7 @@ namespace JiBoard {
         public bool updateRequired;
         public Language currentLang;
 
-        public static Version currentVersion = new Version(0, 2, 2);
+        public static Version currentVersion = new Version(0, 2, 2, 1);
 
         public MainWindow() {
             InitializeComponent();
@@ -235,7 +235,7 @@ namespace JiBoard {
         void Window_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e) {
             switch (e.Key) {
                 case System.Windows.Input.Key.Tab:
-                    ChangeView(viewType.Next());
+                    ChangeView(viewType.Next(), viewSayings);
                     e.Handled = true;
                     break;
                 case System.Windows.Input.Key.OemTilde:
