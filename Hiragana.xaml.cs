@@ -132,7 +132,7 @@ namespace JiBoard {
             currentLang = lang;
             switch (lang) {
                 case JiBoard.Language.Japanese:
-                    Title = "じーぼーど　»　ひらがな";
+                    Title = "じーぼーど　»　ひらがな　【" + currentVersion + "】";
                     TransHeading.Content = "ひらがな";
                     TransHeading.FontSize = 36;
                     ViewSayingsCheckbox.Content = "はつおん";
@@ -147,7 +147,7 @@ namespace JiBoard {
                     UpdateButton.Content = "いま　すぐ\nあっぷでと";
                     break;
                 case JiBoard.Language.English:
-                    Title = "JiBoard　»　Hiragana";
+                    Title = "JiBoard » Hiragana [v" + currentVersion + "]";
                     TransHeading.Content = "Hiragana";
                     TransHeading.FontSize = 32;
                     ViewSayingsCheckbox.Content = "Pronunciation";
