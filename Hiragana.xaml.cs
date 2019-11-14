@@ -1,10 +1,16 @@
-﻿using System.Collections.Generic;
+﻿//This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+//This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+//You should have received a copy of the GNU General Public License along with this program. If not, see<https://www.gnu.org/licenses/>.
+
+//Starflash Studios, hereby disclaims all copyright interest in the program 'JiBoard' (which is a portable Japanese IME) written by Cody Bock.
+
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Globalization;
-using System.Threading.Tasks;
+
 using Octokit;
 
 namespace JiBoard {
@@ -26,7 +32,7 @@ namespace JiBoard {
 #if DEBUG
             DebugAll();
 #endif
-            switch (CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.ToLowerInvariant()) {
+            switch (System.Windows.Forms.InputLanguage.CurrentInputLanguage.Culture.TwoLetterISOLanguageName.ToLowerInvariant()) {
                 case "en":
                     ChangeLanguage(JiBoard.Language.English);
                     DisplayLanguage.SelectedIndex = 1;
@@ -120,12 +126,19 @@ namespace JiBoard {
         public void ChangeView(HiraganaType type, bool saying = false) {
             viewType = type;
             viewSayings = saying;
-            Debug.WriteLine("Viewing: " + type + (saying ? "'s saying" : ""));
+            Dispatcher.Invoke(InternalChangeView);
+        }
+
+        async Task InternalChangeView() {
+            Debug.WriteLine("Viewing: " + viewType + (viewSayings ? "'s saying" : ""));
             foreach (KeyValuePair<Hiragana, Button> entry in importedHiragana) {
-                entry.Value.Content = entry.Key.Get(type, saying, out bool m);
+                entry.Value.Content = entry.Key.Get(viewType, viewSayings, out bool m);
                 entry.Value.Opacity = m ? 0.5 : 1;
-                entry.Value.FontSize = saying ? 16 : 36;
+                entry.Value.FontSize = viewSayings ? 16 : 36;
             }
+            ViewTypeCombo.SelectedIndex = (int)viewType;
+            ViewSayingsCheckbox.IsChecked = viewSayings;
+            await Task.Yield();
         }
 
         public void ChangeLanguage(Language lang) {
@@ -217,6 +230,19 @@ namespace JiBoard {
         void UpdateButton_Click(object sender, RoutedEventArgs e) {
             Process.Start("explorer.exe", $"/select,\"{System.Reflection.Assembly.GetEntryAssembly().Location}\"");
             Process.Start(@"https://github.com/starflash-studios/JiBoard/releases");
+        }
+
+        void Window_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e) {
+            switch (e.Key) {
+                case System.Windows.Input.Key.Tab:
+                    ChangeView(viewType.Next());
+                    e.Handled = true;
+                    break;
+                case System.Windows.Input.Key.OemTilde:
+                    ChangeView(viewType, !viewSayings);
+                    e.Handled = true;
+                    break;
+            }
         }
     }
 
