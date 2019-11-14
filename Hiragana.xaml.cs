@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
@@ -14,10 +13,10 @@ namespace JiBoard {
         public HiraganaType viewType;
         public bool viewSayings;
         public bool useInput;
-        public bool needsUpdate;
+        public bool updateRequired;
         public Language currentLang;
 
-        public static Version currentVersion = new Version(0, 2, 0, 0);
+        public static Version currentVersion = new Version(0, 2, 2);
 
         public MainWindow() {
             InitializeComponent();
@@ -39,7 +38,8 @@ namespace JiBoard {
 
             }
             ChangeView(HiraganaType.Normal);
-            //Task.Run(CheckForUpdate);
+            UpdateGrid.Visibility = Visibility.Hidden;
+            Dispatcher.Invoke(CheckForUpdate);
         }
 
         public async Task CheckForUpdate() {
@@ -49,8 +49,16 @@ namespace JiBoard {
                 Debug.WriteLine("Found release: " + release.TagName + " >> " + release.Name);
             }
             Version latest = new Version(releases[0]);
-            needsUpdate = currentVersion.IsOlder(latest);
-            Debug.WriteLine("Update required: " + needsUpdate);
+            Debug.WriteLine("Latest version: " + latest);
+            Debug.WriteLine("Current version: " + currentVersion);
+            updateRequired = currentVersion.IsOlder(latest);
+            if (updateRequired) {
+                Debug.WriteLine("Update required");
+                UpdateGrid.Visibility = Visibility.Visible;
+            } else {
+                Debug.WriteLine("Running latest version");
+                UpdateGrid.Visibility = Visibility.Hidden;
+            }
             ChangeLanguage(currentLang);
         }
 
@@ -135,10 +143,8 @@ namespace JiBoard {
                     ((ComboBoxItem)ViewTypeCombo.Items[3]).Content = "だくてん";
                     ViewTypeCombo.FontSize = 12;
                     TransClipboardRegion.Content = "くりぷぼっど";
-                    ClipTextClear.Content = "くりあ";
-                    ClipTextClear.FontSize = 16;
                     ClipTextCopy.Content = "こぴぃ";
-                    //UpdateButton.Content = needsUpdate ? "いま　すぐ　あっぷでと" : "あっぷでと　の　かくにん";
+                    UpdateButton.Content = "いま　すぐ\nあっぷでと";
                     break;
                 case JiBoard.Language.English:
                     Title = "JiBoard　»　Hiragana";
@@ -152,10 +158,8 @@ namespace JiBoard {
                     ((ComboBoxItem)ViewTypeCombo.Items[3]).Content = "Dakuten";
                     ViewTypeCombo.FontSize = 11;
                     TransClipboardRegion.Content = "Clipboard";
-                    ClipTextClear.Content = "✗";
-                    ClipTextClear.FontSize = 16;
                     ClipTextCopy.Content = "Copy";
-                    //UpdateButton.Content = needsUpdate ? "Update Now" : "Check for Updates";
+                    UpdateButton.Content = "Update Now";
                     break;
             }
         }
@@ -211,11 +215,8 @@ namespace JiBoard {
         void DisplayLanguage_SelectionChanged(object sender, SelectionChangedEventArgs e) => ChangeLanguage((Language)((ComboBox)sender).SelectedIndex);
 
         void UpdateButton_Click(object sender, RoutedEventArgs e) {
-            if (needsUpdate) {
-                Process.Start(@"https://github.com/starflash-studios/JiBoard/releases");
-            } else {
-                CheckForUpdate();
-            }
+            Process.Start("explorer.exe", $"/select,\"{System.Reflection.Assembly.GetEntryAssembly().Location}\"");
+            Process.Start(@"https://github.com/starflash-studios/JiBoard/releases");
         }
     }
 
@@ -249,6 +250,8 @@ namespace JiBoard {
             security = int.Parse(split[2]);
             typo = int.Parse(split[3]);
         }
+
+        public Version EnforcePositive() => new Version(major.Positive(), minor.Positive(), security.Positive(), typo.Positive());
 
         /// <summary>
         /// Returns false if 'other' is a higher version

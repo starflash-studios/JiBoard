@@ -14,6 +14,11 @@
             }
         }
 
+        public static float Positive(this float a) => a < 0 ? -a : a;
+        public static int Positive(this int a) => a < 0 ? -a : a;
+        public static float Negative(this float a) => -a.Positive();
+        public static int Negative(this int a) => -a.Positive();
+
         public static string Clipboard {
             get => System.Windows.Clipboard.GetText();
             set => System.Windows.Clipboard.SetText(value);
