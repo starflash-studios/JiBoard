@@ -21,7 +21,7 @@
             <RowDefinition Height="120"/>
             <RowDefinition Height="275"/>
         </Grid.RowDefinitions>
-        <Label Content="ひらがな" HorizontalAlignment="Left" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="45" VerticalAlignment="Top" Width="580" FontSize="36" Margin="0,10,0,0" Grid.ColumnSpan="2"/>
+        <Label x:Name="TransHeading" Content="ひらがな" HorizontalAlignment="Left" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="45" VerticalAlignment="Top" Width="570" FontSize="36" Margin="0,10,0,0"/>
         <Grid Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Height="270" VerticalAlignment="Top" Width="550" Margin="10,45,0,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="20"/>
@@ -94,7 +94,7 @@
 
             <!-- ~~~~~~~~~~~~~~~~~ -->
         </Grid>
-        <ComboBox x:Name="ViewTypeCombo" Grid.Row="0" Grid.Column="1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" SelectedIndex="0" HorizontalAlignment="Left" Height="50" Margin="0,65,0,0" VerticalAlignment="Top" Width="112" RenderTransformOrigin="0.083,-0.139" SelectionChanged="ViewTypeCombo_SelectionChanged">
+        <ComboBox x:Name="ViewTypeCombo" Grid.Row="0" Grid.Column="1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" SelectedIndex="0" HorizontalAlignment="Left" Height="50" Margin="0,65,0,0" VerticalAlignment="Top" Width="112" SelectionChanged="ViewTypeCombo_SelectionChanged">
             <ComboBoxItem Content="ひらがな"/>
             <ComboBoxItem Content="ちさなひらがな"/>
             <ComboBoxItem Content="はんだくてん"/>
@@ -146,7 +146,7 @@
             <Button Content="・" Grid.Row="1" Grid.Column="10" HorizontalAlignment="Left" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"  VerticalAlignment="Top" Width="50" Height="50" FontSize="24" Click="Receive"/>
         </Grid>
         <Grid Grid.Column="1" HorizontalAlignment="Left" Height="100" Margin="0,10,0,0" Grid.Row="1" VerticalAlignment="Top" Width="112">
-            <Label Content="くりぷぼっど" Padding="0" HorizontalAlignment="Left" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Width="112" FontSize="16" Height="26"/>
+            <Label x:Name="TransClipboardRegion" Content="くりぷぼっど" Padding="0" HorizontalAlignment="Left" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Width="112" FontSize="16" Height="26"/>
             <TextBox x:Name="CurrentClipboard" Text="" IsReadOnly="True" HorizontalAlignment="Left" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="54" Margin="0,36,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="112" FontSize="24"/>
         </Grid>
         <Grid HorizontalAlignment="Left" Height="60" Margin="10,10,0,0" Grid.Row="2" VerticalAlignment="Top" Width="672" Grid.ColumnSpan="2" Grid.Column="0">
@@ -161,5 +161,10 @@
             <Button x:Name="ClipTextCopy" Content="こぴぃ" HorizontalAlignment="Left" Height="40" Margin="560,10,0,0" VerticalAlignment="Top" Width="112" FontSize="20" Click="ClipTextCopy_Click"/>
             <Button x:Name="ClipTextClear" Content="くりあ" HorizontalAlignment="Left" Height="40" Margin="509,10,0,0" VerticalAlignment="Top" Width="40" FontSize="16" Click="ClipTextClear_Click"/>
         </Grid>
+        <ComboBox x:Name="DisplayLanguage" Grid.Row="0" Grid.Column="1" SelectedIndex="0" HorizontalAlignment="Left" Height="40" Margin="0,275,0,0" VerticalAlignment="Top" Width="112" SelectionChanged="DisplayLanguage_SelectionChanged">
+            <ComboBoxItem Content="日本語"/>
+            <ComboBoxItem Content="English"/>
+        </ComboBox>
+        <!--<Button x:Name="UpdateButton" Content="Update Now" Grid.Column="1" HorizontalAlignment="Left" Height="45" Margin="0,10,0,0" VerticalAlignment="Top" Width="112" Click="UpdateButton_Click"/>-->
     </Grid>
 </Window>
