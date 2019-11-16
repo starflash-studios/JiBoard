@@ -4,13 +4,14 @@
 
 //Starflash Studios, hereby disclaims all copyright interest in the program 'JiBoard' (which is a portable Japanese IME) written by Cody Bock.
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-
 using Octokit;
 
 namespace JiBoard {
@@ -22,10 +23,15 @@ namespace JiBoard {
         public bool updateRequired;
         public Language currentLang;
 
-        public static Version currentVersion = new Version(0, 2, 2, 1);
+        public DirectoryInfo appPath;
+        public FileInfo appFile;
+
+        public static Version currentVersion = new Version(0, 2, 3);
 
         public MainWindow() {
             InitializeComponent();
+            appFile = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
+            appPath = appFile.Directory;
             Width += 10;
             Height += 5;
             ManualImport();
@@ -193,7 +199,7 @@ namespace JiBoard {
             if (missing) { get = h.Get(false); }
             Copy(get);
         }
-        
+
         void ViewTypeCombo_SelectionChanged(object sender, RoutedEventArgs e) => ChangeView((HiraganaType)((ComboBox)sender).SelectedIndex, viewSayings);
 
         void ViewSayingsCheckbox_Click(object sender, RoutedEventArgs e) => ChangeView(viewType, ((CheckBox)sender).IsChecked ?? false);
@@ -248,36 +254,36 @@ namespace JiBoard {
 
     public struct Version {
         public int major;
+        public int sector;
         public int minor;
-        public int security;
-        public int typo;
+        public int fix;
 
-        public override string ToString() => $"{major}.{minor}.{security}.{typo}";
+        public override string ToString() => $"{major}.{sector}.{minor}.{fix}";
 
         public Version(int maj = 0, int min = 0, int sec = 0, int typ = 0) {
             major = maj;
-            minor = min;
-            security = sec;
-            typo = typ;
+            sector = min;
+            minor = sec;
+            fix = typ;
         }
 
         public Version(string parse) {
             string[] split = parse.Split("."[0]);
             major = int.Parse(split[0]);
-            minor = int.Parse(split[1]);
-            security = int.Parse(split[2]);
-            typo = int.Parse(split[3]);
+            sector = int.Parse(split[1]);
+            minor = int.Parse(split[2]);
+            fix = int.Parse(split[3]);
         }
 
         public Version(Release release) {
             string[] split = release.TagName.Split("."[0]);
             major = int.Parse(split[0]);
-            minor = int.Parse(split[1]);
-            security = int.Parse(split[2]);
-            typo = int.Parse(split[3]);
+            sector = int.Parse(split[1]);
+            minor = int.Parse(split[2]);
+            fix = int.Parse(split[3]);
         }
 
-        public Version EnforcePositive() => new Version(major.Positive(), minor.Positive(), security.Positive(), typo.Positive());
+        public Version EnforcePositive() => new Version(major.Positive(), sector.Positive(), minor.Positive(), fix.Positive());
 
         /// <summary>
         /// Returns false if 'other' is a higher version
@@ -296,13 +302,13 @@ namespace JiBoard {
         public bool IsOlder(Version other, int levelOfScrutiny = 0) {
             switch (levelOfScrutiny) {
                 case 1:
-                    return other.major > major || other.minor > minor || other.security > security;
+                    return other.major > major || other.sector > sector || other.minor > minor;
                 case 2:
-                    return other.major > major || other.minor > minor;
+                    return other.major > major || other.sector > sector;
                 case 3:
                     return other.major > major;
                 default:
-                    return other.major > major || other.minor > minor || other.security > security || other.typo > typo;
+                    return other.major > major || other.sector > sector || other.minor > minor || other.fix > fix;
             }
         }
     }
